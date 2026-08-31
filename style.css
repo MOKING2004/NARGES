@@ -130,12 +130,13 @@ h1 {
 }
 
 .album-title {
-  font-size: 1.2em;
-  font-weight: 600;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.8em;
+  font-weight: 700;
   color: #1c1c1e;
   margin-bottom: 15px;
   direction: ltr;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .carousel-container {
@@ -149,12 +150,11 @@ h1 {
 
 .carousel-track {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   transition: transform 0.5s ease-in-out;
   will-change: transform;
 }
 
-/* هر آیتم فقط یک تصویر است */
 .carousel-item {
   flex: 0 0 100%;
   max-width: 100%;
@@ -162,29 +162,25 @@ h1 {
   overflow: hidden;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* ارتفاع ثابت برای حفظ یکنواختی */
+  height: 300px; /* یا می‌توانی از aspect-ratio استفاده کنی */
+  aspect-ratio: 4 / 3; /* نسبت تصویر ۴:۳ */
 }
 
 .carousel-item img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   display: block;
   pointer-events: none;
   border-radius: 10px;
 }
 
-/* حذف overlay و کلاس‌های side/active */
-.overlay {
-  display: none;
-}
-
+/* حذف کلاس‌های اضافی */
+.overlay,
 .carousel-item.side,
 .carousel-item.active {
-  width: 100%;
-  height: auto;
-  opacity: 1;
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: none;
 }
 
 .carousel-nav {
@@ -401,7 +397,7 @@ h1 {
     padding: 14px;
   }
   .album-title {
-    font-size: 1em;
+    font-size: 1.5em;
   }
   .envelope {
     width: 100px;
