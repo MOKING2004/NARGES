@@ -27,7 +27,6 @@ function buildCarousel() {
   for (let i = 0; i < total; i++) {
     const item = document.createElement('div');
     item.classList.add('carousel-item');
-    item.dataset.index = i;
 
     const img = document.createElement('img');
     img.src = photos[i];
@@ -42,10 +41,8 @@ function buildCarousel() {
 
 // ==================== به‌روزرسانی اسلاید ====================
 function updateCarousel() {
-  const containerWidth = carouselTrack.parentElement.offsetWidth;
-  // جابه‌جایی افقی با transform
-  const translateX = -currentIndex * containerWidth;
-  carouselTrack.style.transform = `translateX(${translateX}px)`;
+  // جابه‌جایی با درصد نسبت به عرض کانتینر
+  carouselTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
 }
 
 // دکمه‌ها
