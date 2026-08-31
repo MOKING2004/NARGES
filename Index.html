@@ -6,7 +6,7 @@
   <title>تولدت مبارک نرگس 🌹</title>
 
   <!-- فونت‌ها -->
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&family=Gulzar&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&family=Gulzar&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     * {
@@ -16,7 +16,10 @@
     }
 
     body {
-      background: linear-gradient(135deg, #fff5f9 0%, #e8f4ff 50%, #fde2e4 100%);
+      background-image: url('IMG_0600.jpeg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
       color: #2b2b2b;
       font-family: 'Vazirmatn', Tahoma, sans-serif;
       text-align: center;
@@ -25,6 +28,41 @@
       min-height: 100vh;
       overflow-x: hidden;
       position: relative;
+    }
+
+    /* لایه سفید نیمه‌شفاف برای خوانایی */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.75);
+      z-index: -1;
+    }
+
+    /* صفحه سیاه ابتدایی */
+    #intro-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: opacity 1s ease;
+    }
+
+    #intro-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-text {
+      color: white;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2em;
+      letter-spacing: 2px;
+      text-align: center;
+      padding: 20px;
     }
 
     .container {
@@ -54,7 +92,6 @@
       font-size: 1.1em;
       color: #e91e63;
       margin: 10px 0 20px;
-      animation: fadeInUp 1s ease;
     }
 
     audio {
@@ -69,48 +106,65 @@
     }
 
     .box {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
-      border: 2px solid transparent;
-      background-clip: padding-box;
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 30px;
       padding: 25px;
       margin: 20px auto;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 0 0 4px rgba(255,255,255,0.5), 0 0 30px rgba(233,30,99,0.2);
-      animation: floatIn 1s ease;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 30px rgba(233,30,99,0.2);
     }
 
-    .gallery {
+    /* آلبوم */
+    .album-title {
+      font-family: 'Vazirmatn', sans-serif;
+      font-size: 1.5em;
+      font-weight: 700;
+      background: linear-gradient(45deg, #e91e63, #2196f3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+      direction: ltr;
+    }
+
+    .album-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .album-image {
+      width: 100%;
+      display: block;
+      border-radius: 15px;
+      transition: opacity 0.5s ease;
+    }
+
+    .album-nav {
       display: flex;
-      flex-direction: column;
-      gap: 18px;
-      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
     }
 
-    .gallery img {
-      width: 100%;
-      max-width: 280px;
+    .album-nav button {
+      background: linear-gradient(45deg, #e91e63, #2196f3);
+      border: none;
+      color: white;
+      padding: 8px 16px;
       border-radius: 20px;
-      border: 3px solid #fff;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15), 0 0 25px rgba(233,30,99,0.3);
-      transition: transform 0.4s, box-shadow 0.4s;
+      cursor: pointer;
+      font-family: 'Vazirmatn', sans-serif;
+      font-weight: 700;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
     }
 
-    .gallery img:hover {
-      transform: scale(1.03) rotate(1deg);
-      box-shadow: 0 20px 45px rgba(0,0,0,0.25), 0 0 40px rgba(33,150,243,0.5);
+    .album-nav button:hover {
+      transform: scale(1.05);
     }
 
-    video {
-      width: 100%;
-      max-width: 320px;
-      border-radius: 20px;
-      margin-top: 20px;
-      border: 3px solid #fff;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15), 0 0 25px rgba(233,30,99,0.3);
-    }
-
-    button {
+    /* دکمه نامه */
+    .letter-btn {
       background: linear-gradient(45deg, #e91e63, #2196f3);
       color: #fff;
       border: none;
@@ -126,7 +180,7 @@
       animation: pulse 2s infinite;
     }
 
-    button:hover {
+    .letter-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 15px 40px rgba(33,150,243,0.6);
     }
@@ -167,7 +221,7 @@
       font-weight: 700;
     }
 
-    /* قلب‌های شناور از پایین به بالا */
+    /* قلب‌های شناور */
     .hearts-container {
       position: fixed;
       bottom: 0;
@@ -193,9 +247,7 @@
         transform: translateY(0) scale(1) rotate(0deg);
         opacity: 0;
       }
-      10% {
-        opacity: 0.8;
-      }
+      10% { opacity: 0.8; }
       50% {
         opacity: 0.9;
         transform: translateY(-50vh) scale(1.1) rotate(10deg);
@@ -206,7 +258,6 @@
       }
     }
 
-    /* جرقه‌های ریز */
     .sparkle {
       position: fixed;
       width: 6px;
@@ -232,33 +283,37 @@
 </head>
 <body>
 
+  <!-- صفحه سیاه ابتدایی -->
+  <div id="intro-overlay">
+    <div class="intro-text">I love you Narges forever…</div>
+  </div>
+
   <!-- قلب‌های شناور -->
   <div class="hearts-container" id="heartsContainer"></div>
+
+  <!-- موزیک -->
+  <audio id="bgMusic" src="Hame Chi.mp3" autoplay></audio>
 
   <div class="container">
     <h1>تولدت مبارک نرگس 🌹</h1>
     <div class="subtitle">بهترین روز برای بهترین آدم دنیای من</div>
 
-    <audio controls autoplay loop>
-      <source src="music.mp3" type="audio/mpeg">
-      مرورگر شما از پخش صدا پشتیبانی نمی‌کند.
-    </audio>
-
+    <!-- آلبوم عکس -->
     <div class="box">
-      <div class="gallery">
-        <img src="photo1.jpg" alt="عکس نرگس" onerror="this.style.display='none'">
-        <img src="photo2.jpg" alt="عکس دونفره" onerror="this.style.display='none'">
-        <img src="photo3.jpg" alt="خاطره ما" onerror="this.style.display='none'">
+      <div class="album-title">Best 9 Months of My Life</div>
+      <div class="album-container">
+        <img id="currentPhoto" class="album-image" src="" alt="عکس">
       </div>
-
-      <video controls poster="photo1.jpg">
-        <source src="video.mp4" type="video/mp4">
-        مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.
-      </video>
+      <div class="album-nav">
+        <button onclick="prevPhoto()">◀ قبلی</button>
+        <button onclick="nextPhoto()">بعدی ▶</button>
+      </div>
     </div>
 
-    <button onclick="toggleLetter()">برای دیدن نامه کلیک کن 💌</button>
+    <!-- دکمه نامه -->
+    <button class="letter-btn" onclick="toggleLetter()">برای دیدن نامه کلیک کن 💌</button>
 
+    <!-- نامه -->
     <div id="letter" class="letter">
       نرگس عزیزم،
 
@@ -280,6 +335,47 @@
   </div>
 
   <script>
+    // لیست عکس‌ها (به همان ترتیب دلخواه)
+    const photos = [
+      "3D61D78D-4B60-444B-99C5-58F0787268BE.jpeg",
+      "4E0A39C7-51DE-4E3D-89E4-171AE7329A61.jpeg",
+      "F26E5507-45C7-463B-A0E6-F6C9420FE22A.jpeg",
+      "IMG_0143.jpeg",
+      "IMG_0144.jpeg",
+      "IMG_0145.jpeg",
+      "IMG_0146.jpeg",
+      "IMG_0147.jpeg",
+      "IMG_0149.jpeg",
+      "IMG_0155.jpeg",
+      "IMG_0302.jpeg",
+      "IMG_0327.jpeg"
+    ];
+    let currentIndex = 0;
+    const imgElement = document.getElementById('currentPhoto');
+
+    function showPhoto(index) {
+      if (index >= 0 && index < photos.length) {
+        currentIndex = index;
+        imgElement.src = photos[currentIndex];
+      }
+    }
+
+    function nextPhoto() {
+      if (currentIndex < photos.length - 1) {
+        showPhoto(currentIndex + 1);
+      }
+    }
+
+    function prevPhoto() {
+      if (currentIndex > 0) {
+        showPhoto(currentIndex - 1);
+      }
+    }
+
+    // نمایش اولین عکس
+    showPhoto(0);
+
+    // تابع نمایش/مخفی نامه
     function toggleLetter() {
       const letter = document.getElementById("letter");
       if (letter.style.display === "block") {
@@ -289,12 +385,26 @@
       }
     }
 
+    // حذف صفحه سیاه بعد از ۲۰ ثانیه
+    const introOverlay = document.getElementById('intro-overlay');
+    const bgMusic = document.getElementById('bgMusic');
+
+    // اگر موزیک شروع شد و ۲۰ ثانیه گذشت
+    bgMusic.addEventListener('playing', () => {
+      setTimeout(() => {
+        introOverlay.classList.add('hidden');
+      }, 20000);
+    });
+
+    // اگر به هر دلیلی موزیک پخش نشد، صفحه سیاه بعد از ۲۰ ثانیه محو شود
+    setTimeout(() => {
+      introOverlay.classList.add('hidden');
+    }, 20000);
+
     // تولید قلب‌های شناور
     const heartsContainer = document.getElementById("heartsContainer");
     const heartSymbols = ["💙", "🌹", "💗", "💕", "💖", "💘", "🤍", "🩵"];
-    const numHearts = 30;
-
-    for (let i = 0; i < numHearts; i++) {
+    for (let i = 0; i < 30; i++) {
       const heart = document.createElement("div");
       heart.classList.add("heart");
       heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
@@ -306,7 +416,7 @@
       heartsContainer.appendChild(heart);
     }
 
-    // تولید جرقه‌های ریز
+    // جرقه‌های ریز
     for (let i = 0; i < 20; i++) {
       const sparkle = document.createElement("div");
       sparkle.classList.add("sparkle");
