@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تولدت مبارک نرگس 🌹</title>
 
-  <!-- فونت‌ها -->
+  <!-- پیش‌بارگذاری فونت‌ها -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&family=Gulzar&family=Dancing+Script:wght@400;700&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&family=Gulzar&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -30,17 +31,10 @@
       position: relative;
     }
 
-    /* لایه سفید نیمه‌شفاف برای خوانایی */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255, 255, 255, 0.75);
-      z-index: -1;
-    }
+    /* حذف لایه سفید */
 
-    /* صفحه سیاه ابتدایی */
-    #intro-overlay {
+    /* صفحه سیاه ابتدایی (پیش‌بارگذاری) */
+    #preloader {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: black;
@@ -51,12 +45,12 @@
       transition: opacity 1s ease;
     }
 
-    #intro-overlay.hidden {
+    #preloader.hidden {
       opacity: 0;
       pointer-events: none;
     }
 
-    .intro-text {
+    .preloader-text {
       color: white;
       font-family: 'Dancing Script', cursive;
       font-size: 1.2em;
@@ -94,26 +88,15 @@
       margin: 10px 0 20px;
     }
 
-    audio {
-      width: 100%;
-      max-width: 420px;
-      margin: 20px auto;
-      display: block;
-      border-radius: 50px;
-      background: #fff;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      outline: none;
-    }
-
+    /* آلبوم */
     .box {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.85);
       border-radius: 30px;
       padding: 25px;
       margin: 20px auto;
       box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 30px rgba(233,30,99,0.2);
     }
 
-    /* آلبوم */
     .album-title {
       font-family: 'Vazirmatn', sans-serif;
       font-size: 1.5em;
@@ -163,7 +146,27 @@
       transform: scale(1.05);
     }
 
-    /* دکمه نامه */
+    /* دکمه پخش موزیک (اگر autoplay کار نکرد) */
+    #play-music-btn {
+      display: none;
+      background: linear-gradient(45deg, #e91e63, #2196f3);
+      color: #fff;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-family: 'Vazirmatn', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 20px 0;
+      font-size: 1.2em;
+      box-shadow: 0 10px 30px rgba(233,30,99,0.4);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    #play-music-btn.show {
+      display: inline-block;
+    }
+
     .letter-btn {
       background: linear-gradient(45deg, #e91e63, #2196f3);
       color: #fff;
@@ -243,19 +246,10 @@
     }
 
     @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(1) rotate(0deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0; }
       10% { opacity: 0.8; }
-      50% {
-        opacity: 0.9;
-        transform: translateY(-50vh) scale(1.1) rotate(10deg);
-      }
-      100% {
-        transform: translateY(-100vh) scale(0.9) rotate(0deg);
-        opacity: 0;
-      }
+      50% { opacity: 0.9; transform: translateY(-50vh) scale(1.1) rotate(10deg); }
+      100% { transform: translateY(-100vh) scale(0.9) rotate(0deg); opacity: 0; }
     }
 
     .sparkle {
@@ -283,16 +277,19 @@
 </head>
 <body>
 
-  <!-- صفحه سیاه ابتدایی -->
-  <div id="intro-overlay">
-    <div class="intro-text">I love you Narges forever…</div>
+  <!-- صفحه پیش‌بارگذاری -->
+  <div id="preloader">
+    <div class="preloader-text">I love you Narges forever…</div>
   </div>
 
   <!-- قلب‌های شناور -->
   <div class="hearts-container" id="heartsContainer"></div>
 
   <!-- موزیک -->
-  <audio id="bgMusic" src="Hame Chi.mp3" autoplay></audio>
+  <audio id="bgMusic" src="Hame Chi.mp3" preload="auto"></audio>
+
+  <!-- دکمه پخش موزیک (فال‌بک) -->
+  <button id="play-music-btn">پخش موزیک 🎵</button>
 
   <div class="container">
     <h1>تولدت مبارک نرگس 🌹</h1>
@@ -372,7 +369,6 @@
       }
     }
 
-    // نمایش اولین عکس
     showPhoto(0);
 
     // تابع نمایش/مخفی نامه
@@ -385,21 +381,61 @@
       }
     }
 
-    // حذف صفحه سیاه بعد از ۲۰ ثانیه
-    const introOverlay = document.getElementById('intro-overlay');
+    // مدیریت پیش‌بارگذاری
+    const preloader = document.getElementById('preloader');
     const bgMusic = document.getElementById('bgMusic');
+    const playBtn = document.getElementById('play-music-btn');
 
-    // اگر موزیک شروع شد و ۲۰ ثانیه گذشت
-    bgMusic.addEventListener('playing', () => {
+    // تابع بررسی لود همه تصاویر
+    function preloadImages() {
+      const promises = photos.map(src => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve; // حتی اگر تصویری لود نشد، ادامه بده
+          img.src = src;
+        });
+      });
+      // افزودن تصویر پس‌زمینه هم به انتظار
+      const bgPromise = new Promise(resolve => {
+        const bg = new Image();
+        bg.onload = resolve;
+        bg.onerror = resolve;
+        bg.src = 'IMG_0600.jpeg';
+      });
+      return Promise.all([...promises, bgPromise]);
+    }
+
+    // انتظار برای لود فونت‌ها و تصاویر
+    async function hidePreloader() {
+      try {
+        await Promise.all([
+          preloadImages(),
+          document.fonts.ready
+        ]);
+      } catch (e) {}
+      // حداکثر ۲۰ ثانیه صبر می‌کنیم
       setTimeout(() => {
-        introOverlay.classList.add('hidden');
-      }, 20000);
+        preloader.classList.add('hidden');
+      }, 500); // کمی تأخیر برای اطمینان از رندر
+    }
+
+    hidePreloader();
+
+    // پخش خودکار موزیک
+    bgMusic.play().then(() => {
+      // موزیک پخش شد
+      playBtn.classList.remove('show');
+    }).catch(() => {
+      // autoplay بلاک شد، دکمه را نمایش بده
+      playBtn.classList.add('show');
     });
 
-    // اگر به هر دلیلی موزیک پخش نشد، صفحه سیاه بعد از ۲۰ ثانیه محو شود
-    setTimeout(() => {
-      introOverlay.classList.add('hidden');
-    }, 20000);
+    // اگر کاربر کلیک کرد، موزیک پخش شود
+    playBtn.addEventListener('click', () => {
+      bgMusic.play();
+      playBtn.classList.remove('show');
+    });
 
     // تولید قلب‌های شناور
     const heartsContainer = document.getElementById("heartsContainer");
