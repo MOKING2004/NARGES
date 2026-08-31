@@ -35,17 +35,15 @@
     <h1>تولدت مبارک نرگسم ❤️</h1>
     <div class="subtitle">بهترین روز برای بهترین آدم دنیای من</div>
 
-    <!-- آلبوم عکس -->
+    <!-- آلبوم چرخشی -->
     <div class="box">
       <div class="album-title">Best 9 Months of My Life</div>
-      <div class="book-container" id="bookContainer">
-        <div class="book" id="book">
-          <div class="page page-left" id="pageLeft"></div>
-          <div class="page page-right" id="pageRight"></div>
-          <div class="flip-page" id="flipPage"></div>
+      <div class="carousel-container" id="carouselContainer">
+        <div class="carousel-track" id="carouselTrack">
+          <!-- آیتم‌ها با جاوااسکریپت ساخته می‌شوند -->
         </div>
       </div>
-      <div class="album-nav">
+      <div class="carousel-nav">
         <button id="prevBtn">◀ قبلی</button>
         <button id="nextBtn">بعدی ▶</button>
       </div>
@@ -53,25 +51,35 @@
 
     <!-- پاکت نامه -->
     <div class="envelope" id="envelope" role="button" aria-label="باز کردن نامه">
-      <span class="envelope-emoji">✉️</span>
-    </div>
-    <div id="letter" class="letter">
-      نرگس عزیزم،
-      امروز روز توست؛ روزی که دنیا زیباترین آدمش را شناخت.
-      می‌خواستم یک تولد فراموش‌نشدنی برایت بسازم.
-      تو برای من فقط یک اسم نیستی؛
-      تو آرامشی، لبخندی، و تمام دلیلِ خوبِ روزهای من.
-      امیدوارم امسال بهترین سال زندگی‌ات باشد.
-      همیشه کنارت می‌مانم.
-      دوستت دارم.
+      <div class="envelope-body">
+        <div class="envelope-letter"></div>
+        <div class="envelope-flap"></div>
+        <span class="envelope-seal">🦄</span>
+      </div>
     </div>
 
-    <div class="signature">
-      ساخته‌شده با عشق برای نرگس 💙
+    <div id="letter" class="letter">
+      نرگس عزیزم،
+
+      امروز روزیه که خدا قشنگ‌ترین فرشتشو به من هدیه داد.
+      از وقتی هستی، روزهای من معنی پیدا کردن.
+      تو آرامشی، لبخندی، و دلیلی برای بهتر بودنم.
+
+      برات بهترین‌ها رو می‌خوام.
+      قول می‌دم تا آخرش کنارت باشم، ساده و صادقانه.
+
+      دوستت دارم تا ابد.
+
+      از طرف عشق ابدیت، محمد
+    </div>
+
+    <!-- فوتر -->
+    <div class="footer-text">
+      سیزده شهریور یک هزار و چهار صد پنج 🤍
     </div>
   </div>
 
   <!-- اسکریپت -->
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
