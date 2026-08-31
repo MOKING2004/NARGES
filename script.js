@@ -14,91 +14,123 @@ const photos = [
   "IMG_0327.jpeg"
 ];
 
-const totalSpreads = Math.ceil(photos.length / 2);
-let currentSpread = 0;
+const totalPhotos = photos.length;
+let currentIndex = 0;
 let isAnimating = false;
 
-const pageLeft = document.getElementById('pageLeft');
-const pageRight = document.getElementById('pageRight');
-const flipPage = document.getElementById('flipPage');
-const bookContainer = document.getElementById('bookContainer');
+const carouselTrack = document.getElementById('carouselTrack');
 
-// ==================== توابع آلبوم ====================
-function updateSpread(spreadIndex, resetFlip = true) {
-  currentSpread = ((spreadIndex % totalSpreads) + totalSpreads) % totalSpreads;
-  const leftPhoto = photos[currentSpread * 2] || '';
-  const rightPhoto = photos[currentSpread * 2 + 1] || '';
+// ==================== ساخت کاروسل ====================
+function buildCarousel() {
+  carouselTrack.innerHTML = '';
+  const total = totalPhotos;
 
-  pageLeft.innerHTML = leftPhoto ? `<img src="${leftPhoto}" alt="عکس">` : '';
-  pageRight.innerHTML = rightPhoto ? `<img src="${rightPhoto}" alt="عکس">` : '';
+  for (let i = 0; i < total; i++) {
+    const item = document.createElement('div');
+    item.classList.add('carousel-item');
+    item.dataset.index = i;
 
-  if (resetFlip) {
-    flipPage.classList.remove('flipping-forward', 'flipping-backward');
-    flipPage.style.transform = 'rotateY(0deg)';
-    flipPage.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = photos[i];
+    img.alt = 'عکس';
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+
+    item.appendChild(img);
+    item.appendChild(overlay);
+
+    carouselTrack.appendChild(item);
   }
-  isAnimating = false;
+
+  updateCarousel();
 }
 
-function nextSpread() {
-  if (isAnimating) return;
-  isAnimating = true;
+// ==================== به‌روزرسانی کاروسل ====================
+function updateCarousel() {
+  const items = carouselTrack.querySelectorAll('.carousel-item');
 
-  const nextIndex = (currentSpread + 1) % totalSpreads;
-  const nextRightPhoto = photos[nextIndex * 2 + 1] || photos[nextIndex * 2] || '';
+  items.forEach((item) => {
+    const idx = parseInt(item.dataset.index);
+    item.classList.remove('side', 'active');
 
-  flipPage.innerHTML = nextRightPhoto ? `<img src="${nextRightPhoto}" alt="عکس">` : '';
-  flipPage.classList.remove('flipping-backward');
-  flipPage.classList.add('flipping-forward');
+    if (idx === currentIndex) {
+      item.classList.add('active');
+    } else if (
+      idx === (currentIndex - 1 + totalPhotos) % totalPhotos ||
+      idx === (currentIndex + 1) % totalPhotos
+    ) {
+      item.classList.add('side');
+    }
+  });
 
-  setTimeout(() => {
-    updateSpread(nextIndex, true);
-  }, 550);
-}
+  // محاسبه موقعیت آیتم فعال برای وسط چین کردن
+  const activeItem = carouselTrack.querySelector('.active');
+  if (activeItem) {
+    const containerWidth = carouselTrack.parentElement.offsetWidth;
+    const activeWidth = activeItem.offsetWidth;
+    const leftOffset = (containerWidth - activeWidth) / 2;
 
-function prevSpread() {
-  if (isAnimating) return;
-  isAnimating = true;
+    let offset = 0;
+    for (let i = 0; i < currentIndex; i++) {
+      const item = carouselTrack.querySelector(`.carousel-item[data-index="${i}"]`);
+      if (item) {
+        offset += item.offsetWidth;
+      }
+    }
 
-  const prevIndex = (currentSpread - 1 + totalSpreads) % totalSpreads;
-  const prevLeftPhoto = photos[prevIndex * 2] || '';
-
-  flipPage.innerHTML = prevLeftPhoto ? `<img src="${prevLeftPhoto}" alt="عکس">` : '';
-  flipPage.style.transform = 'rotateY(-180deg)';
-  flipPage.classList.remove('flipping-forward');
-  flipPage.classList.add('flipping-backward');
-
-  setTimeout(() => {
-    updateSpread(prevIndex, true);
-  }, 550);
+    const translateX = leftOffset - offset;
+    carouselTrack.style.transform = `translateX(${translateX}px)`;
+  }
 }
 
 // دکمه‌ها
-document.getElementById('nextBtn').addEventListener('click', nextSpread);
-document.getElementById('prevBtn').addEventListener('click', prevSpread);
+document.getElementById('nextBtn').addEventListener('click', nextSlide);
+document.getElementById('prevBtn').addEventListener('click', prevSlide);
 
-// مقداردهی اولیه
-updateSpread(0, true);
+function nextSlide() {
+  if (isAnimating) return;
+  isAnimating = true;
+  currentIndex = (currentIndex + 1) % totalPhotos;
+  updateCarousel();
+  setTimeout(() => {
+    isAnimating = false;
+  }, 400);
+}
+
+function prevSlide() {
+  if (isAnimating) return;
+  isAnimating = true;
+  currentIndex = (currentIndex - 1 + totalPhotos) % totalPhotos;
+  updateCarousel();
+  setTimeout(() => {
+    isAnimating = false;
+  }, 400);
+}
 
 // ==================== سوییپ ====================
+const carouselContainer = document.getElementById('carouselContainer');
 let touchStartX = 0;
 let touchEndX = 0;
 
-bookContainer.addEventListener('touchstart', (e) => {
+carouselContainer.addEventListener('touchstart', (e) => {
   touchStartX = e.changedTouches[0].screenX;
 }, { passive: true });
 
-bookContainer.addEventListener('touchend', (e) => {
+carouselContainer.addEventListener('touchend', (e) => {
   touchEndX = e.changedTouches[0].screenX;
   const diff = touchStartX - touchEndX;
   if (Math.abs(diff) > 50) {
     if (diff > 0) {
-      nextSpread();
+      nextSlide();
     } else {
-      prevSpread();
+      prevSlide();
     }
   }
 }, { passive: true });
+
+// ==================== مقداردهی اولیه ====================
+buildCarousel();
 
 // ==================== موزیک و پیش‌لودر ====================
 const preloader = document.getElementById('preloader');
@@ -111,7 +143,7 @@ function startPreloaderTimer() {
   if (preloaderTimer) return;
   preloaderTimer = setTimeout(() => {
     preloader.classList.add('hidden');
-  }, 20000); // 20 ثانیه بعد از شروع پخش موزیک
+  }, 20000);
 }
 
 function startMusic() {
@@ -121,36 +153,37 @@ function startMusic() {
     playBtn.classList.add('playing');
     startPreloaderTimer();
   }).catch(() => {
-    // اگر باز هم fail شد، دوباره تلاش کن
     setTimeout(startMusic, 500);
   });
 }
 
 playBtn.addEventListener('click', startMusic);
 
-// تلاش برای پخش خودکار (در صورت مجاز بودن مرورگر)
 window.addEventListener('load', () => {
   bgMusic.play().then(() => {
     musicStarted = true;
     playBtn.classList.add('playing');
     startPreloaderTimer();
   }).catch(() => {
-    // اگر autoplay بلاک شد، کاری نکن، منتظر کلیک کاربر روی دکمه پلی
+    // autoplay بلاک شد، منتظر کلیک کاربر
   });
 });
 
-// ==================== نامه ====================
+// ==================== پاکت نامه ====================
 const envelope = document.getElementById('envelope');
 const letter = document.getElementById('letter');
 
 envelope.addEventListener('click', () => {
-  if (letter.style.display === 'block') {
-    letter.style.display = 'none';
+  envelope.classList.toggle('open');
+  if (envelope.classList.contains('open')) {
+    setTimeout(() => {
+      letter.style.display = 'block';
+      letter.style.animation = 'none';
+      letter.offsetHeight; // reflow
+      letter.style.animation = 'letterReveal 0.6s ease';
+    }, 500);
   } else {
-    letter.style.display = 'block';
-    letter.style.animation = 'none';
-    letter.offsetHeight; // reflow
-    letter.style.animation = 'letterReveal 0.6s ease';
+    letter.style.display = 'none';
   }
 });
 
