@@ -16,11 +16,10 @@ const photos = [
 
 const totalPhotos = photos.length;
 let currentIndex = 0;
-let isAnimating = false;
 
 const carouselTrack = document.getElementById('carouselTrack');
 
-// ==================== ساخت کاروسل ====================
+// ==================== ساخت اسلایدشو ====================
 function buildCarousel() {
   carouselTrack.innerHTML = '';
   const total = totalPhotos;
@@ -34,54 +33,19 @@ function buildCarousel() {
     img.src = photos[i];
     img.alt = 'عکس';
 
-    const overlay = document.createElement('div');
-    overlay.classList.add('overlay');
-
     item.appendChild(img);
-    item.appendChild(overlay);
-
     carouselTrack.appendChild(item);
   }
 
   updateCarousel();
 }
 
-// ==================== به‌روزرسانی کاروسل ====================
+// ==================== به‌روزرسانی اسلاید ====================
 function updateCarousel() {
-  const items = carouselTrack.querySelectorAll('.carousel-item');
-
-  items.forEach((item) => {
-    const idx = parseInt(item.dataset.index);
-    item.classList.remove('side', 'active');
-
-    if (idx === currentIndex) {
-      item.classList.add('active');
-    } else if (
-      idx === (currentIndex - 1 + totalPhotos) % totalPhotos ||
-      idx === (currentIndex + 1) % totalPhotos
-    ) {
-      item.classList.add('side');
-    }
-  });
-
-  // محاسبه موقعیت آیتم فعال برای وسط چین کردن
-  const activeItem = carouselTrack.querySelector('.active');
-  if (activeItem) {
-    const containerWidth = carouselTrack.parentElement.offsetWidth;
-    const activeWidth = activeItem.offsetWidth;
-    const leftOffset = (containerWidth - activeWidth) / 2;
-
-    let offset = 0;
-    for (let i = 0; i < currentIndex; i++) {
-      const item = carouselTrack.querySelector(`.carousel-item[data-index="${i}"]`);
-      if (item) {
-        offset += item.offsetWidth;
-      }
-    }
-
-    const translateX = leftOffset - offset;
-    carouselTrack.style.transform = `translateX(${translateX}px)`;
-  }
+  const containerWidth = carouselTrack.parentElement.offsetWidth;
+  // جابه‌جایی افقی با transform
+  const translateX = -currentIndex * containerWidth;
+  carouselTrack.style.transform = `translateX(${translateX}px)`;
 }
 
 // دکمه‌ها
@@ -89,23 +53,13 @@ document.getElementById('nextBtn').addEventListener('click', nextSlide);
 document.getElementById('prevBtn').addEventListener('click', prevSlide);
 
 function nextSlide() {
-  if (isAnimating) return;
-  isAnimating = true;
   currentIndex = (currentIndex + 1) % totalPhotos;
   updateCarousel();
-  setTimeout(() => {
-    isAnimating = false;
-  }, 400);
 }
 
 function prevSlide() {
-  if (isAnimating) return;
-  isAnimating = true;
   currentIndex = (currentIndex - 1 + totalPhotos) % totalPhotos;
   updateCarousel();
-  setTimeout(() => {
-    isAnimating = false;
-  }, 400);
 }
 
 // ==================== سوییپ ====================
@@ -122,9 +76,9 @@ carouselContainer.addEventListener('touchend', (e) => {
   const diff = touchStartX - touchEndX;
   if (Math.abs(diff) > 50) {
     if (diff > 0) {
-      nextSlide();
+      nextSlide(); // کشیدن به چپ → اسلاید بعدی
     } else {
-      prevSlide();
+      prevSlide(); // کشیدن به راست → اسلاید قبلی
     }
   }
 }, { passive: true });
