@@ -17,86 +17,46 @@ const photos = [
 const totalPhotos = photos.length;
 let currentIndex = 0;
 
-const carouselTrack = document.getElementById('carouselTrack');
-const carouselContainer = document.getElementById('carouselContainer');
+const slideshowImage = document.getElementById('slideshowImage');
+const slideshowContainer = document.getElementById('slideshowContainer');
 
-// ==================== ساخت اسلایدشو ====================
-function buildCarousel() {
-  carouselTrack.innerHTML = '';
-  for (let i = 0; i < totalPhotos; i++) {
-    const item = document.createElement('div');
-    item.classList.add('carousel-item');
-
-    const img = document.createElement('img');
-    img.src = photos[i];
-    img.alt = 'عکس';
-    // حذف lazy loading
-    // img.loading = 'lazy';
-
-    // برای نمایش خطا در صورت عدم لود
-    img.onerror = () => {
-      console.error(`تصویر بارگذاری نشد: ${photos[i]}`);
-      img.style.backgroundColor = '#f0f0f0';
-      img.alt = 'تصویر موجود نیست';
-    };
-
-    item.appendChild(img);
-    carouselTrack.appendChild(item);
-  }
-
-  // بعد از ساخت، یک بار به‌روزرسانی کن
-  updateCarousel();
-}
-
-// ==================== به‌روزرسانی اسلاید ====================
-function updateCarousel() {
-  // استفاده از clientWidth برای دقت
-  const containerWidth = carouselContainer.clientWidth;
-  // عرض هر اسلاید دقیقاً containerWidth است
-  const shift = -currentIndex * containerWidth;
-  carouselTrack.style.transform = `translateX(${shift}px)`;
+// ==================== نمایش تصویر فعلی ====================
+function showPhoto(index) {
+  currentIndex = ((index % totalPhotos) + totalPhotos) % totalPhotos;
+  slideshowImage.src = photos[currentIndex];
 }
 
 // ==================== دکمه‌ها ====================
-document.getElementById('nextBtn').addEventListener('click', nextSlide);
-document.getElementById('prevBtn').addEventListener('click', prevSlide);
+document.getElementById('nextBtn').addEventListener('click', () => {
+  showPhoto(currentIndex + 1);
+});
 
-function nextSlide() {
-  currentIndex = (currentIndex + 1) % totalPhotos;
-  updateCarousel();
-}
-
-function prevSlide() {
-  currentIndex = (currentIndex - 1 + totalPhotos) % totalPhotos;
-  updateCarousel();
-}
+document.getElementById('prevBtn').addEventListener('click', () => {
+  showPhoto(currentIndex - 1);
+});
 
 // ==================== سوییپ ====================
 let touchStartX = 0;
 let touchEndX = 0;
 
-carouselContainer.addEventListener('touchstart', (e) => {
+slideshowContainer.addEventListener('touchstart', (e) => {
   touchStartX = e.changedTouches[0].screenX;
 }, { passive: true });
 
-carouselContainer.addEventListener('touchend', (e) => {
+slideshowContainer.addEventListener('touchend', (e) => {
   touchEndX = e.changedTouches[0].screenX;
   const diff = touchStartX - touchEndX;
   if (Math.abs(diff) > 50) {
     if (diff > 0) {
-      nextSlide(); // کشیدن به چپ → اسلاید بعدی
+      showPhoto(currentIndex + 1);
     } else {
-      prevSlide(); // کشیدن به راست → اسلاید قبلی
+      showPhoto(currentIndex - 1);
     }
   }
 }, { passive: true });
 
 // ==================== بارگذاری اولیه ====================
-window.addEventListener('load', () => {
-  buildCarousel();
-  // برای اطمینان از محاسبه درست بعد از لود فونت‌ها و تصاویر
-  setTimeout(updateCarousel, 100);
-});
+showPhoto(0);
 
 // ==================== موزیک و پیش‌لودر ====================
 const preloader = document.getElementById('preloader');
@@ -125,7 +85,6 @@ function startMusic() {
 
 playBtn.addEventListener('click', startMusic);
 
-// تلاش برای پخش خودکار
 window.addEventListener('load', () => {
   bgMusic.play().then(() => {
     musicStarted = true;
@@ -179,6 +138,3 @@ for (let i = 0; i < 15; i++) {
   sparkle.style.width = sparkle.style.height = (3 + Math.random() * 5) + 'px';
   document.body.appendChild(sparkle);
 }
-
-// ==================== به‌روزرسانی در تغییر اندازه صفحه ====================
-window.addEventListener('resize', updateCarousel);
