@@ -18,34 +18,36 @@ const totalPhotos = photos.length;
 let currentIndex = 0;
 
 const carouselTrack = document.getElementById('carouselTrack');
+const carouselContainer = document.getElementById('carouselContainer');
 
 // ==================== ساخت اسلایدشو ====================
 function buildCarousel() {
   carouselTrack.innerHTML = '';
-  const total = totalPhotos;
-
-  for (let i = 0; i < total; i++) {
+  for (let i = 0; i < totalPhotos; i++) {
     const item = document.createElement('div');
     item.classList.add('carousel-item');
 
     const img = document.createElement('img');
     img.src = photos[i];
     img.alt = 'عکس';
+    img.loading = 'lazy'; // بارگذاری تنبل برای بهبود عملکرد
 
     item.appendChild(img);
     carouselTrack.appendChild(item);
   }
-
   updateCarousel();
 }
 
 // ==================== به‌روزرسانی اسلاید ====================
 function updateCarousel() {
-  // جابه‌جایی با درصد نسبت به عرض کانتینر
-  carouselTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+  // عرض واقعی کانتینر (نه ترک)
+  const containerWidth = carouselContainer.offsetWidth;
+  // جابه‌جایی بر حسب پیکسل
+  const shift = -currentIndex * containerWidth;
+  carouselTrack.style.transform = `translateX(${shift}px)`;
 }
 
-// دکمه‌ها
+// ==================== دکمه‌ها ====================
 document.getElementById('nextBtn').addEventListener('click', nextSlide);
 document.getElementById('prevBtn').addEventListener('click', prevSlide);
 
@@ -60,7 +62,6 @@ function prevSlide() {
 }
 
 // ==================== سوییپ ====================
-const carouselContainer = document.getElementById('carouselContainer');
 let touchStartX = 0;
 let touchEndX = 0;
 
@@ -80,7 +81,7 @@ carouselContainer.addEventListener('touchend', (e) => {
   }
 }, { passive: true });
 
-// ==================== مقداردهی اولیه ====================
+// ==================== بارگذاری اولیه ====================
 buildCarousel();
 
 // ==================== موزیک و پیش‌لودر ====================
@@ -163,3 +164,6 @@ for (let i = 0; i < 15; i++) {
   sparkle.style.width = sparkle.style.height = (3 + Math.random() * 5) + 'px';
   document.body.appendChild(sparkle);
 }
+
+// ==================== به‌روزرسانی در تغییر اندازه صفحه ====================
+window.addEventListener('resize', updateCarousel);
