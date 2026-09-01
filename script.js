@@ -73,25 +73,27 @@ function startPreloaderTimer() {
 }
 
 function startMusic() {
-  if (musicStarted) return;
+  // هر بار که کلیک می‌شود سعی می‌کنیم پخش شود
   bgMusic.play().then(() => {
     musicStarted = true;
-    playBtn.classList.add('playing');
+    playBtn.classList.add('playing'); // مخفی کردن دکمه
     startPreloaderTimer();
   }).catch(() => {
-    setTimeout(startMusic, 500);
+    // اگر خطا داد، دکمه را همچنان نمایش بده
+    playBtn.classList.remove('playing');
   });
 }
 
 playBtn.addEventListener('click', startMusic);
 
+// تلاش برای پخش خودکار (در صورت اجازه مرورگر)
 window.addEventListener('load', () => {
   bgMusic.play().then(() => {
     musicStarted = true;
     playBtn.classList.add('playing');
     startPreloaderTimer();
   }).catch(() => {
-    // autoplay بلاک شد، منتظر کلیک کاربر
+    // autoplay بلاک شد، دکمه را نمایش می‌دهیم (توسط پیش‌لودر)
   });
 });
 
