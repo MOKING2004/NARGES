@@ -30,19 +30,29 @@ function buildCarousel() {
     const img = document.createElement('img');
     img.src = photos[i];
     img.alt = 'عکس';
-    img.loading = 'lazy'; // بارگذاری تنبل برای بهبود عملکرد
+    // حذف lazy loading
+    // img.loading = 'lazy';
+
+    // برای نمایش خطا در صورت عدم لود
+    img.onerror = () => {
+      console.error(`تصویر بارگذاری نشد: ${photos[i]}`);
+      img.style.backgroundColor = '#f0f0f0';
+      img.alt = 'تصویر موجود نیست';
+    };
 
     item.appendChild(img);
     carouselTrack.appendChild(item);
   }
+
+  // بعد از ساخت، یک بار به‌روزرسانی کن
   updateCarousel();
 }
 
 // ==================== به‌روزرسانی اسلاید ====================
 function updateCarousel() {
-  // عرض واقعی کانتینر (نه ترک)
-  const containerWidth = carouselContainer.offsetWidth;
-  // جابه‌جایی بر حسب پیکسل
+  // استفاده از clientWidth برای دقت
+  const containerWidth = carouselContainer.clientWidth;
+  // عرض هر اسلاید دقیقاً containerWidth است
   const shift = -currentIndex * containerWidth;
   carouselTrack.style.transform = `translateX(${shift}px)`;
 }
@@ -82,7 +92,11 @@ carouselContainer.addEventListener('touchend', (e) => {
 }, { passive: true });
 
 // ==================== بارگذاری اولیه ====================
-buildCarousel();
+window.addEventListener('load', () => {
+  buildCarousel();
+  // برای اطمینان از محاسبه درست بعد از لود فونت‌ها و تصاویر
+  setTimeout(updateCarousel, 100);
+});
 
 // ==================== موزیک و پیش‌لودر ====================
 const preloader = document.getElementById('preloader');
@@ -111,6 +125,7 @@ function startMusic() {
 
 playBtn.addEventListener('click', startMusic);
 
+// تلاش برای پخش خودکار
 window.addEventListener('load', () => {
   bgMusic.play().then(() => {
     musicStarted = true;
